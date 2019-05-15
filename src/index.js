@@ -69,7 +69,7 @@ let dummyPosts = [
 		imageUrl: 'microsoft.com'
 	},
 	{
-		id: 3,
+		id: 7,
 		description: 'Advanced GraphQL',
 		imageUrl: 'yahoo.com'
 	},
@@ -81,8 +81,13 @@ const typeDefs = `
 		hello: String
 		people: [Person]
 		person(id: Int!): Person
-		posts: [Post]
+		posts(filter: String): [Post]
 		post(id: Int!): Post
+	}
+	
+	type Mutation {
+		createPost(imageUrl: String!, description: String!): Post!
+		deletePost(id: Int!): Post!
 	}
 	
 	type Person {
@@ -106,8 +111,35 @@ const resolvers = {
 		hello: () => `Hello World!`,
 		people: () => dummyPersons,
 		person: (parent, args, context) => { console.log(args.id); return dummyPersons[args.id-1] },
-		posts: () => dummyPosts,
+		posts: (parent, args, context) => {
+			var filteredDummyPosts = dummyPosts.filter((dummyPost) => { 
+				return dummyPost.description.indexOf(args.filter) != -1
+			})
+			
+			return filteredDummyPosts
+		},
 		post: (parent, args, context) => { console.log(args.id); return dummyPosts[args.id-1] },
+	},
+	Mutation: {
+		createPost: (parent, args) => { 
+			var newPost = {
+				id: dummyPosts[dummyPosts.length-1].id + 1, 
+				description: args.description, 
+				imageUrl: args.imageUrl
+			}
+		
+			dummyPosts.push(newPost)
+			return newPost
+		},
+		deletePost: (parent, args) => {
+			dummyPosts.forEach((item, index) => {
+				if(item.id == args.id){
+					var deletedPost = dummyPosts[index]
+					dummyPosts.splice(index, 1)
+					return deletedPost
+				}
+			})
+		}
 	},
 	Person: {
 		id: (parent) => parent.id,
