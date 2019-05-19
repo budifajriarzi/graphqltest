@@ -1,0 +1,23 @@
+{
+  "name": "graphqltest",
+  "version": "1.0.0",
+  "description": "graphql using nodejs",
+  "main": "index.js",
+  "dependencies": {
+    "graphql-yoga": "^1.17.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/budifajriarzi/graphqltest.git"
+  },
+  "author": "Budi Fajri Arzi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/budifajriarzi/graphqltest/issues"
+  },
+  "homepage": "https://github.com/budifajriarzi/graphqltest#readme"
+}
