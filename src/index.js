@@ -7,53 +7,22 @@ let dummyPersons = [
 		id: 1, 
 		firstName: 'Michael',
 		lastName: 'Suyama',
-		fullName: 'Michael Suyama',
 		email: 'suyama@wp.co',
-		likedPosts: [
-			{
-				id: 1,
-				description: 'Introduction to GraphQL',
-				imageUrl: 'google.com'
-			},
-			{
-				id: 2,
-				description: 'Welcome to POC',
-				imageUrl: 'microsoft.com'
-			}
-		]
+		likedPosts: [1, 2]
 	},
 	{
 		id: 2, 
 		firstName: 'Nancy',
 		lastName: 'DaVolio',
-		fullName: 'Nancy DaVolio',
 		email: 'davolio@wp.co',
-		likedPosts: [
-			{
-				id: 1,
-				description: 'Introduction to GraphQL',
-				imageUrl: 'google.com'
-			}
-		]
+		likedPosts: [1]
 	},
 	{
 		id: 3, 
 		firstName: 'David',
 		lastName: 'Buchanan',
-		fullName: 'David Buchanan',
 		email: 'buchanan@wp.co',
-		likedPosts: [
-			{
-				id: 2,
-				description: 'Welcome to POC',
-				imageUrl: 'microsoft.com'
-			},
-			{
-				id: 3,
-				description: 'Advanced GraphQL',
-				imageUrl: 'yahoo.com'
-			}
-		]
+		likedPosts: [2, 3]
 	}
 ]
 
@@ -69,7 +38,7 @@ let dummyPosts = [
 		imageUrl: 'microsoft.com'
 	},
 	{
-		id: 7,
+		id: 3,
 		description: 'Advanced GraphQL',
 		imageUrl: 'yahoo.com'
 	},
@@ -145,9 +114,11 @@ const resolvers = {
 		id: (parent) => parent.id,
 		firstName: (parent) => parent.firstName,
 		lastName: (parent) => parent.lastName,
-		fullName: (parent) => parent.fullName,
+		fullName: (parent) => parent.firstName + ' ' + parent.lastName,
 		email: (parent) => parent.email,
-		likedPosts: (parent) => parent.likedPosts
+		likedPosts: (parent) => dummyPosts.filter((dummyPost) => {
+			return parent.likedPosts.indexOf(dummyPost.id) != -1 
+		})
 	},
 	Post: {
 		id: (parent) => parent.id,
