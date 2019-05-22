@@ -1,4 +1,4 @@
-const { GraphQLServer } = require('graphql-yoga')
+const { GraphQLServer, PubSub } = require('graphql-yoga')
 
 // -------------------------------------
 // dummy data
@@ -58,6 +58,10 @@ const typeDefs = `
 		createPost(imageUrl: String!, description: String!): Post!
 		deletePost(id: Int!): Post!
 	}
+
+	type Subscription {
+		newPost: Post
+	}
 	
 	type Person {
 		id: Int!
@@ -75,6 +79,8 @@ const typeDefs = `
 	}
 `
 
+const CHANNEL = 'CHANNEL'
+
 const resolvers = {
 	Query: {
 		hello: () => `Hello World!`,
@@ -90,7 +96,7 @@ const resolvers = {
 		post: (parent, args, context) => { console.log(args.id); return dummyPosts[args.id-1] },
 	},
 	Mutation: {
-		createPost: (parent, args) => { 
+		createPost: (parent, args, { pubsub }) => { 
 			var newPost = {
 				id: dummyPosts[dummyPosts.length-1].id + 1, 
 				description: args.description, 
@@ -98,6 +104,7 @@ const resolvers = {
 			}
 		
 			dummyPosts.push(newPost)
+			pubsub.publish(CHANNEL, { newPost: newPost })
 			return newPost
 		},
 		deletePost: (parent, args) => {
@@ -108,6 +115,13 @@ const resolvers = {
 					return deletedPost
 				}
 			})
+		}
+	},
+	Subscription: {
+		newPost: {
+			subscribe: (parent, args, { pubsub }) => {
+				return pubsub.asyncIterator(CHANNEL)
+			}
 		}
 	},
 	Person: {
@@ -127,8 +141,10 @@ const resolvers = {
 	}
 }
 
+const pubsub = new PubSub()
 const server = new GraphQLServer({
 	typeDefs,
 	resolvers,
+	context: { pubsub }
 })
 server.start(() => console.log(`Server is running on http://localhost:4000`))
