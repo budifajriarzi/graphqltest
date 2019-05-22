@@ -44,41 +44,6 @@ let dummyPosts = [
 	},
 ]
 // -------------------------------------
-
-const typeDefs = `
-	type Query {
-		hello: String
-		people: [Person]
-		person(id: Int!): Person
-		posts(filter: String): [Post]
-		post(id: Int!): Post
-	}
-	
-	type Mutation {
-		createPost(imageUrl: String!, description: String!): Post!
-		deletePost(id: Int!): Post!
-	}
-
-	type Subscription {
-		newPost: Post
-	}
-	
-	type Person {
-		id: Int!
-		firstName: String
-		lastName: String
-		fullName: String
-		email: String
-		likedPosts: [Post]
-	}
-	
-	type Post {
-		id: Int!
-		description: String
-		imageUrl: String
-	}
-`
-
 const CHANNEL = 'CHANNEL'
 
 const resolvers = {
@@ -143,8 +108,8 @@ const resolvers = {
 
 const pubsub = new PubSub()
 const server = new GraphQLServer({
-	typeDefs,
-	resolvers,
+	typeDefs : './src/schema.graphql',
+	resolvers : resolvers,
 	context: { pubsub }
 })
 server.start(() => console.log(`Server is running on http://localhost:4000`))
